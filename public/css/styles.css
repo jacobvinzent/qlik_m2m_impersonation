@@ -1,0 +1,156 @@
+.viz {
+    width: 600px;
+    height: 600px;
+    padding: 16px;
+    border: 1px solid #bbb;
+    border-radius: 3px;
+    box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2);
+    position:relative;
+  }
+  
+  .app {
+    position: relative;
+    width: 1200px;
+    height: 800px;
+    padding: 16px;
+    border: 1px solid #bbb;
+    border-radius: 3px;
+    box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  .selections-bar {
+    min-height: 42px;
+    width: 1200px;
+    border: 1px solid #bbb;
+    box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2);
+    position: relative;
+    box-sizing: border-box;
+  }
+  
+  .classic-app {
+    height: 800px;
+    width: 1200px;
+    border: 1px solid #bbb;
+    flex-grow: 1;
+    border-radius: 3px;
+    box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2);
+    position: relative;
+    box-sizing: border-box;
+    overflow: auto;
+    position: relative;
+  }
+  
+  /* App.css */
+  
+  .main-app {
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    margin-top: 50px;
+  }
+  
+  .content {
+    display: flex;
+    flex-direction: column;
+    margin-left: 220px;
+    overflow:hidden;
+  }
+  
+  body,
+  html {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+    font-size: 14px;
+    background-color: #f5f5f5;
+    color: #333;
+    height: 100%;
+    width: 100%;
+  }
+  
+  .container {
+    padding: 8px;
+    gap: 8px;
+    position: relative;
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    box-sizing: border-box;
+    margin-top: 50px;
+    padding-top: 50px;
+  }
+  
+  #root {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .home {
+    margin: 40px 40px;
+  }
+  
+  /* SidePanel.css */
+  .side-panel {
+    color: white;
+    padding: 10px 20px;
+    width: 150px;
+    position: fixed;
+    flex: 0 1 auto;
+    border-right: 1px solid #bbb;
+    overflow:hidden;
+    height:100%;
+  }
+  
+  .side-panel ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .side-panel ul li {
+    padding: 10px 0;
+  }
+  
+  .side-panel ul li a {
+    text-decoration: none;
+  }
+  
+  .side-panel ul li a:hover {
+    color: #007bff;
+  }
+  
+  .tippy-top {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    z-index: 2;
+  }
+  
+  .top-bar {
+    background-color: #333;
+    color: white;
+    font-size: xx-large;
+    padding: 10px 10px;
+    text-align: center;
+    flex: 0 1 auto;
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .sheet-drop {
+    width: 250px;
+    margin-bottom: 10px;
+    font-size: medium;
+  }
+  
+  a.anchor {
+    display: block;
+    position: relative;
+    top: -50px;
+    visibility: hidden;
+  }

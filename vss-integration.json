@@ -1,0 +1,13 @@
+{
+    "manifestVersion": 1,
+    "id": "qlikauth0qlikembed",
+    "version": "1.0.0",
+    "name": "qlikauth0qlikembed",
+    "publisher": "vinzent",
+    "description": "",
+    "targets": [
+        {
+            "id": "Microsoft.VisualStudio.Services.Integration"
+        }
+    ]
+}

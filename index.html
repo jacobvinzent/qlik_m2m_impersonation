@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+ >
+    <title>@qlik/embed-web-components example</title>
+    <script
+    crossorigin="anonymous"
+    type="application/javascript"
+    src="https://cdn.jsdelivr.net/npm/@qlik/embed-web-components"
+    data-auth-type="Oauth2"
+    data-host="<replace_URL_From_Qlik>"
+    data-client-id="<replace_OAUTH_clientID_From_Qlik>" 
+    data-redirect-uri="http://localhost:3000"
+    data-access-token-storage="session"
+    data-auto-redirect="true"
+  ></script>
+    <link rel="stylesheet" type="text/css" href="css/styles.css" />
+
+  </head>
+  <body>
+    <div class="tippy-top">
+      <div class="top-bar">@qlik/embed-web-components example</div>
+    </div>
+    <div class="main-app">
+      <div class="side-panel">
+        <ul>
+          <li>
+            <a href="#home">Home</a>
+          </li>
+          <li>
+            <a href="#classic-app">Classic App</a>
+          </li>
+          <li>
+            <a href="#analytics-chart">Analytics Chart</a>
+          </li>
+          <li>
+            <a href="#analytics-chart-data">Analytics Chart data</a>
+          </li>
+          <li>
+            <a href="#field">Field</a>
+          </li>
+          <li>
+            <a href="#analytics-sheet">Analytics Sheet</a>
+          </li>
+          <li>
+            <a href="#sheet-nav">Sheet navigation</a>
+          </li>
+        </ul>
+      </div>
+      <div class="content"> 
+        <div id="home" class="home fb-ig" style="margin-top: 50px; padding-top: 50px;">
+          <h2>&lt;- Pick an example</h2>
+          <p>
+            The examples in the left panel demonstrates how the @qlik/embed-web-components library can be used in embedding scenarios.
+          </p>
+        </div>
+        <div id="classic-app" class="container">
+          <h1>qlik-embed selections embeds the selections bar in the page.</h1>
+          <div class="selections-bar">
+            <qlik-embed
+            ui="selections"
+            app-id="<replace_APPID_From_Qlik>"
+            </qlik-embed>
+          </div>
+        </div>
+        <div id="classic-app" class="container">
+          <h1>qlik-embed classic/app embeds the full Qlik Sense client in the page.</h1>
+          <div class="classic-app">
+            <qlik-embed
+              ui="classic/app"
+              app-id="<replace_APPID_From_Qlik>"
+              sheet-id="<replace_SHEETID_From_Qlik>"
+              theme="breeze"
+              ></qlik-embed>
+          </div>
+        </div>
+        <div id="analytics-chart" class="container">
+          <h1>qlik-embed analytics/chart embeds a chart in the page.</h1>
+          <h3><i>Renders only nebula.js visualizations.</i></h3>
+          <div class="viz">
+            <qlik-embed
+              id="visualization"
+              ui="analytics/chart"
+              app-id="<replace_APPID_From_Qlik>"
+              object-id="<replace_OBJECTID_From_Qlik>"
+              context:json="{theme:'breeze', language:'de'}"
+              disable-cell-padding="true"
+            ></qlik-embed>
+          </div>
+        </div>
+        <div id="field" class="container">
+          <h1>qlik-embed field embeds a list box in the page.</h1>
+          <div class="viz">
+            <qlik-embed
+              ui="field"
+              app-id="<replace_APPID_From_Qlik>"
+              field-id="AccountDesc"
+            ></qlik-embed>
+          </div>
+        </div>
+        <div id="analytics-sheet" class="container">
+          <h1>qlik-embed analytics/sheet without selections bar.</h1>
+          <h3><i>Renders only nebula.js visualizations in sheets.</i></h3>
+          <div class="classic-app">
+            <qlik-embed
+              ui="analytics/sheet"
+              app-id="<replace_APPID_From_Qlik>"
+              object-id="<replace_SHEETID_From_Qlik>"
+            ></qlik-embed>
+          </div>
+        </div>
+        <div id="sheet-nav" class="container">
+          <h1>Use the app model to get a list of sheets and control sheet navigation.</h1>
+          <h3><i>Renders only nebula.js visualizations in sheets.</i></h3>
+          <select id="sheetdrop" name="SheetList" class="sheet-drop"></select>
+          <div class="classic-app">
+            <qlik-embed
+              id="sheet-change"
+              ui="analytics/sheet"
+              app-id="<replace_APPID_From_Qlik>"
+              object-id="<replace_SHEETID_From_Qlik>"
+            ></qlik-embed>
+          </div>
+        </div>
+        <div id="analytics-chart-data" class="container">
+          <h1>Custom table from analytics/chart object data.</h1>
+          <h3><code>let chartData = objLayout.qHyperCube.qDataPages[0].qMatrix;</code></h3>
+          <div id="chart-data" class="viz" style="height: auto;">
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script type="">
+      const getSheets = async() => {
+    const element = document.getElementById("sheet-change");
+    const refApi = await element.getRefApi();
+    const doc = await refApi.getDoc();
+    const sheetList = await doc.getSheetList();
+   
+    let dd = document.getElementById('sheetdrop');
+    dd.length = 0;
+    let defaultOption = document.createElement('option');
+    defaultOption.text = "Select a sheet to navigate to";
+    dd.add(defaultOption);
+    dd.selectedIndex=0;
+
+    let option;
+    for (let i=0;i<sheetList.length; i++) {
+      option = document.createElement('option');
+      option.text = sheetList[i].qMeta.title;
+      option.value = sheetList[i].qMeta.id;
+      dd.add(option);
+    }
+
+    dd.addEventListener("change", function() {
+      if (dd.selectedIndex > 0)
+      {
+        //console.log(dd.options[dd.selectedIndex].value);
+        let selOption = dd.options[dd.selectedIndex];
+        console.log(selOption.value);
+        element.setAttribute('object-id', selOption.value);
+      }
+    })
+  };
+
+  </script>
+  <script type="module">
+    //Get the data from the visualization in the page
+    const getData = async() => {
+    console.log("trying to get some data");
+    const element = document.getElementById("visualization");
+    const refApi = await element.getRefApi();
+    const obj = await refApi.getObject();
+    const objLayout = await obj.getLayout();
+    console.log(objLayout);
+
+    let container = document.getElementById("chart-data");
+    let table = document.createElement("table");
+    let cols = [objLayout.qHyperCube.qDimensionInfo[0].title,objLayout.qHyperCube.qMeasureInfo[0].title];
+    let thead = document.createElement("thead");
+    let tr = document.createElement("tr");
+    cols.forEach((item) => {
+      let th = document.createElement("th");
+      th.textContent = item;
+      tr.appendChild(th);
+    });
+    thead.appendChild(tr);
+    table.appendChild(thead);
+
+    let chartData = objLayout.qHyperCube.qDataPages[0].qMatrix;
+    chartData.forEach((item) => {
+      console.log(item)
+      let tr = document.createElement("tr");
+      let vals = Object.values(item);
+      vals.forEach((elem) => {
+        let td = document.createElement("td");
+        td.textContent = elem.qText;
+        tr.appendChild(td);
+      });
+      table.appendChild(tr);
+    });
+    container.appendChild(table);
+  }
+  getData();
+  getSheets();
+  </script>
+</html>
