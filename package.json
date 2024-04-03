@@ -16,8 +16,8 @@
   "contributes": {
     "commands": [
       {
-        "command": "samples.quickInput",
-        "title": "Setup Qlik integration"
+        "command": "qlik.m2m",
+        "title": "Setup Qlik M2M impersonation"
       }
     ]
   },

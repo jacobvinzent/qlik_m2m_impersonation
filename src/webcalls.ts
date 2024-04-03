@@ -6,6 +6,8 @@
 import { window } from 'vscode';
 import fetch from 'node-fetch';
 import { rejects } from 'assert';
+import * as fs from 'fs';
+import * as path from 'path';
 
 
 
@@ -13,7 +15,7 @@ import { rejects } from 'assert';
  * Shows an input box using window.showInputBox().
  */
 export async function createAuth0Child(client_id: String, client_secret: String, auth0url: String, qlikSenseURL: String) {
-	qlikSenseURL = cleanOAuthURL(qlikSenseURL,'');
+	qlikSenseURL = cleanOAuthURL(qlikSenseURL, '');
 	return new Promise(async (resolve, reject) => {
 		//Get Token from auth0
 		auth0url = cleanOAuthURL(auth0url, 'auth0.com');
@@ -55,13 +57,13 @@ const getOauthToken = async (client_id: String, client_secret: String, auth0url:
 
 
 const createAuth0App = async (token: String, auth0url: String, qlikSenseURL: String) => {
-	qlikSenseURL = cleanOAuthURL(qlikSenseURL,'');
+	qlikSenseURL = cleanOAuthURL(qlikSenseURL, '');
 
 	return new Promise((resolve, reject) => {
 		var headers = new Headers();
 		headers.append("Content-Type", "application/json");
 		headers.append("Authorization", `Bearer ${token}`);
-		qlikSenseURL = cleanOAuthURL(qlikSenseURL,'');
+		qlikSenseURL = cleanOAuthURL(qlikSenseURL, '');
 		var raw = JSON.stringify({
 			"name": "Qlik_SaaS",
 			"logo_uri": "",
@@ -115,7 +117,7 @@ const createAuth0App = async (token: String, auth0url: String, qlikSenseURL: Str
 
 //For OAUTH creds, get Token
 export async function getQlikSenseToken(clientID: String, clientSecrect: String, qlikSenseURL: String) {
-	qlikSenseURL = cleanOAuthURL(qlikSenseURL,'');
+	qlikSenseURL = cleanOAuthURL(qlikSenseURL, '');
 	return new Promise((resolve, reject) => {
 		var headers = new Headers();
 		headers.append("Accept", "application/json");
@@ -138,18 +140,17 @@ export async function getQlikSenseToken(clientID: String, clientSecrect: String,
 			.then(response => response.text())
 			.then(result => {
 				resolve(result);
-				}
-				)
-			.catch(error => 
-				{console.log('error', error)}
-				);
+			}
+			)
+			.catch(error => { console.log('error', error) }
+			);
 	});
 
 };
 
 
 export async function createOAuthInQlikSense(token: String, qlikSenseURL: String) {
-	qlikSenseURL = cleanOAuthURL(qlikSenseURL,'');
+	qlikSenseURL = cleanOAuthURL(qlikSenseURL, '');
 
 	return new Promise((resolve, reject) => {
 		var headers = new Headers();
@@ -158,14 +159,14 @@ export async function createOAuthInQlikSense(token: String, qlikSenseURL: String
 
 		var raw = JSON.stringify({
 			"appType": "spa",
-			"clientName": "Auto0 demo",
+			"clientName": "my-embedded-portal",
 			"description": "",
-			"allowedScopes":["user_default","admin.apps","admin.apps:export","admin.apps:read","admin.automations","admin.automations:read","admin.spaces","admin.spaces:read","apps","apps:export","apps:read","identity.email:read","automations","automations:read","identity.name:read","identity.picture:read","identity.subject:read","spaces.data","spaces.data:read","spaces.managed","spaces.managed:read","spaces.shared","spaces.shared:read"],
+			"allowedScopes": ["user_default", "admin.apps", "admin.apps:export", "admin.apps:read", "admin.automations", "admin.automations:read", "admin.spaces", "admin.spaces:read", "apps", "apps:export", "apps:read", "identity.email:read", "automations", "automations:read", "identity.name:read", "identity.picture:read", "identity.subject:read", "spaces.data", "spaces.data:read", "spaces.managed", "spaces.managed:read", "spaces.shared", "spaces.shared:read"],
 			"redirectUris": [
 				"https://localhost:3000",
 				"http://localhost:3000"
 
-				
+
 			],
 			"allowedOrigins": [
 				"https://localhost:3000",
@@ -192,7 +193,7 @@ export async function createOAuthInQlikSense(token: String, qlikSenseURL: String
 //JVI
 //Create constent in here before Publish
 export async function MakeOauthTrusted(token: String, qlikSenseURL: String, OauthID: String) {
-	qlikSenseURL = cleanOAuthURL(qlikSenseURL,'');
+	qlikSenseURL = cleanOAuthURL(qlikSenseURL, '');
 
 	return new Promise((resolve, reject) => {
 		var header = new Headers();
@@ -200,11 +201,7 @@ export async function MakeOauthTrusted(token: String, qlikSenseURL: String, Oaut
 		header.append("Authorization", `Bearer ${token}`);
 
 		var raw = JSON.stringify([
-			{
-				"op": "replace",
-				"value": "trusted",
-				"path": "/consent_method"
-			}
+			{"op":"replace","value":"trusted","path":"/consentMethod"}
 		]);
 
 		var requestOptions: Object = {
@@ -215,7 +212,11 @@ export async function MakeOauthTrusted(token: String, qlikSenseURL: String, Oaut
 		};
 
 		fetch(`${qlikSenseURL}/api/v1/oauth-clients/${OauthID}/connection-configs/me`, requestOptions)
-			.then(response => response.text())
+		
+
+			.then(response => {
+				response.text();
+			})
 			.then(result => {
 				resolve(result);
 			}).
@@ -226,7 +227,7 @@ export async function MakeOauthTrusted(token: String, qlikSenseURL: String, Oaut
 };
 
 export async function PublishOAuthInQlikSense(token: String, qlikSenseURL: String, OauthID: String) {
-	qlikSenseURL = cleanOAuthURL(qlikSenseURL,'');
+	qlikSenseURL = cleanOAuthURL(qlikSenseURL, '');
 	return new Promise((resolve, reject) => {
 		var headers = new Headers();
 		headers.append("Content-Type", "application/json");
@@ -273,7 +274,7 @@ export async function getTenantID(token: String, qlikSenseURL: String) {
 }
 
 export async function createOauthIDPInQlikSense(token: String, qlikSenseURL: String, tenantId: String, OAuthURL: String, OAuthAppClient: String, OAuthAppSecret: String) {
-	qlikSenseURL = cleanOAuthURL(qlikSenseURL,'');
+	qlikSenseURL = cleanOAuthURL(qlikSenseURL, '');
 	let JSON_ = `{"provider":"auth0","interactive":true,"protocol":"OIDC","tenantIds":["${tenantId}"],"skipVerify": true,"options":{"discoveryUrl":"${OAuthURL}/.well-known/openid-configuration","clientId":"${OAuthAppClient}","clientSecret":"${OAuthAppSecret}","emailVerifiedAlwaysTrue":false,"blockOfflineAccessScope":false,"claimsMapping":{"sub":["sub"],"name":["name"],"groups":["groups"],"email":["email"],"client_id":["client_id"],"picture":["picture"]}}}`;
 
 	return new Promise((resolve, reject) => {
@@ -307,6 +308,161 @@ export async function createOauthIDPInQlikSense(token: String, qlikSenseURL: Str
 
 
 
+async function uploadApp(token: String, qlikSenseURL: String, filePath: string) {
+
+
+	return new Promise((resolve, reject) => {
+		const fileData = fs.readFileSync(filePath);
+		var headers = new Headers();
+		headers.append("Content-Type", "application/octet-stream");
+		headers.append("Authorization", `Bearer ${token}`);
+
+		var requestOptions: Object = {
+			method: 'POST',
+			headers: headers,
+			body: fileData
+
+		};
+
+		fetch(`${qlikSenseURL}/api/v1/apps/import?name=testapp`, requestOptions).then(response => response.text())
+			.then(result => {
+				resolve(result);
+			})
+			.catch(error => {
+				console.log('error', error);
+			});;
+
+	});
+
+}
+
+export async function uploadApps(token: String, qlikSenseURL: String, path_input: string) {
+	let apps: any = [];
+	return new Promise(async (resolve, reject) => {
+		const files = fs.readdirSync(path_input).filter(t => {
+			return path.extname(t).toLowerCase() === ".qvf";
+		});
+
+		for(var n=0; n<files.length; n++)
+		//for (var file in files)
+		//	files.forEach((file) =>
+		{
+			const filePath = path.join(path_input, files[n]);
+
+			// Read file content synchronously
+			//const data = fs.readFileSync(filePath, 'utf8');
+			let app = await uploadApp(token, qlikSenseURL, filePath);
+			apps.push(app);
+
+		};
+		resolve(apps);
+	});
+}
+
+
+export async function createSpace(token: String, qlikSenseURL: String, spacename: string) {
+	return new Promise((resolve, reject) => {
+		var headers = new Headers();
+		headers.append("Content-Type", "application/json");
+		headers.append("Authorization", `Bearer ${token}`);
+		headers.append("accept", "application/json");
+
+
+		var requestOptions: Object = {
+			method: 'POST',
+			headers: headers,
+			body: JSON.stringify({
+				"name": `${spacename}`,
+				"type": "managed"
+			}),
+			redirect: 'follow'
+		};
+
+		fetch(`${qlikSenseURL}/api/v1/spaces`, requestOptions)
+			.then(response => response.text())
+			.then(result => {
+				resolve(result);
+			})
+			.catch(error => {
+				console.log('error', error);
+			});
+	});
+
+}
+
+
+
+export async function createSpaceAssignment(token: String, qlikSenseURL: String, spaceID: String) {
+
+	return new Promise((resolve, reject) => {
+		var headers = new Headers();
+		headers.append("Content-Type", "application/json");
+		headers.append("Authorization", `Bearer ${token}`);
+		headers.append("accept", "application/json");
+
+
+		var requestOptions: Object = {
+			method: 'POST',
+			headers: headers,
+			body: JSON.stringify(
+				{ "type": "group", "assigneeId": "000000000000000000000001", "roles": ["consumer"] }
+			),
+			redirect: 'follow'
+		};
+
+
+
+		fetch(`${qlikSenseURL}/api/v1/spaces/${spaceID}/assignments`, requestOptions)
+			.then(response => 
+				{
+					response.text();
+				})
+			.then(result => {
+				resolve(result);
+			})
+			.catch(error => {
+				console.log('error', error);
+			});
+	});
+}
+
+
+export async function publishApps(token: String, qlikSenseURL: String, app: String, space: String, appName:string) {
+	return new Promise((resolve, reject) => {
+		var headers = new Headers();
+		headers.append("Content-Type", "application/json");
+		headers.append("Authorization", `Bearer ${token}`);
+		headers.append("accept", "application/json");
+
+		var reqObj = {"spaceId":JSON.parse(`${space}`).id,"attributes":{"name":`${appName}`,"description":""},"data":"source"};
+
+
+		var requestOptions: Object = {
+			method: 'POST',
+			headers: headers,
+			body: JSON.stringify(reqObj),
+			redirect: 'follow'
+		};
+
+
+		fetch(`${qlikSenseURL}/api/v1/apps/${app}/publish`, requestOptions)
+			.then(response => 
+				{
+					response.text();
+				})
+			.then(result => {
+				resolve(result);
+			})
+			.catch(error => {
+				console.log('error', error);
+			});
+
+
+
+	});
+}
+
+
 export function cleanOAuthURL(url: String, find: string) {
 
 	while (url.endsWith('/')) {
@@ -324,6 +480,11 @@ export function cleanOAuthURL(url: String, find: string) {
 
 
 }
+
+
+
+
+
 
 
 

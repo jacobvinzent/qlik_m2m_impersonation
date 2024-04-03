@@ -7,7 +7,7 @@ import { window, commands, ExtensionContext, QuickPickItemKind } from 'vscode';
 import * as vscode from 'vscode';
 
 import { showQuickPick, showInputBox } from './basicInput';
-import { createAuth0Child, getQlikSenseToken, getTenantID, createOauthIDPInQlikSense, createOAuthInQlikSense, MakeOauthTrusted, PublishOAuthInQlikSense, cleanOAuthURL } from './webcalls';
+import { createAuth0Child, getQlikSenseToken, getTenantID, createOauthIDPInQlikSense, createOAuthInQlikSense, MakeOauthTrusted, PublishOAuthInQlikSense, cleanOAuthURL, uploadApps, createSpace, createSpaceAssignment, publishApps } from './webcalls';
 import { url } from 'inspector';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -31,7 +31,9 @@ export function activate(context: ExtensionContext) {
 	if (_path !== undefined && _path[0] !== null) {
 		_pathDirect = _path[0].uri.path;
 	}
-	context.subscriptions.push(commands.registerCommand('samples.quickInput', async () => {
+
+	//samples.quickInput
+	context.subscriptions.push(commands.registerCommand('qlik.m2m', async () => {
 
 		if (typeof _path === 'undefined') {
 			
@@ -39,7 +41,7 @@ export function activate(context: ExtensionContext) {
 
 
 		} else {
-			if (_pathDirect.startsWith("/")) { _pathDirect = _pathDirect.substring(1, _pathDirect.length); };
+			        if (_pathDirect.startsWith("/")) { _pathDirect = _pathDirect.substring(1, _pathDirect.length); };
 			
 			
 			let QlikSenseURL: string  = '';
@@ -172,9 +174,22 @@ export function activate(context: ExtensionContext) {
 
 			replaceObject["<replace_OAUTH_clientID_From_Qlik>"] = Oauth_id;
 
-
-			await PublishOAuthInQlikSense(QlikSenseToken, QlikSenseURL, Oauth_id);
 			await MakeOauthTrusted(QlikSenseToken, QlikSenseURL, Oauth_id);
+			await PublishOAuthInQlikSense(QlikSenseToken, QlikSenseURL, Oauth_id);
+			
+
+			let apps: any = await uploadApps(QlikSenseToken, QlikSenseURL,path.join(__dirname, '..', 'apps'));
+
+			let space:any = await createSpace(QlikSenseToken, QlikSenseURL, "Qlik demo space");
+			await createSpaceAssignment(QlikSenseToken, QlikSenseURL, JSON.parse(space).id);
+
+			for(var n=0; n<apps.length; n++) {
+				let app = apps[n];
+
+				await publishApps(QlikSenseToken, QlikSenseURL, JSON.parse(app).attributes.id, space, JSON.parse(app).attributes.name);
+			}
+
+
 
 
 			replaceObject["<replace_APPID_From_Qlik>"] = QlikAppID;
@@ -193,9 +208,7 @@ export function activate(context: ExtensionContext) {
 	 		term.sendText('npm install');
 			term.sendText('npm start run');
 
-			//vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(QlikIDPValidateURL));
-			//After skip verify is introduced
-			vscode.commands.executeCommand('vscode.open', QlikSenseURL);
+			
 
 			function testForEmptyJSONValue(properties:Array<string>, JSON:any) {
 				let returnVal = "";
