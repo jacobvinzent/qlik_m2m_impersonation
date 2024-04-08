@@ -158,10 +158,12 @@ export async function createOAuthInQlikSense(token: String, qlikSenseURL: String
 		headers.append("Authorization", `Bearer ${token}`);
 
 		var raw = JSON.stringify({
-			"appType": "spa",
+			"appType": "web",
 			"clientName": "my-embedded-portal",
 			"description": "",
-			"allowedScopes": ["user_default", "admin.apps", "admin.apps:export", "admin.apps:read", "admin.automations", "admin.automations:read", "admin.spaces", "admin.spaces:read", "apps", "apps:export", "apps:read", "identity.email:read", "automations", "automations:read", "identity.name:read", "identity.picture:read", "identity.subject:read", "spaces.data", "spaces.data:read", "spaces.managed", "spaces.managed:read", "spaces.shared", "spaces.shared:read"],
+			//"allowedGrantTypes":["urn:qlik:oauth:user-impersonation","client_credentials"],
+			"allowedGrantTypes":["urn:qlik:oauth:user-impersonation"],
+			"allowedScopes": ["admin.users","admin.users:read","users","users:read","spaces.data","spaces.data:read","spaces.managed","spaces.managed:read","spaces.shared","spaces.shared:read","automl-deployments","automl-experiments","admin.spaces","admin.spaces:read","automations","automations:read","admin.automations","admin.automations:read","apps","apps:export","apps:read","admin.apps","admin.apps:export","admin.apps:read","identity.picture:read","identity.subject:read","identity.email:read","identity.name:read","admin_classic","user_default"],
 			"redirectUris": [
 				"https://localhost:3000",
 				"http://localhost:3000"

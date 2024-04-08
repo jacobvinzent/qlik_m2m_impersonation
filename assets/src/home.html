@@ -1,0 +1,465 @@
+DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="description" content="" />
+  <meta name="author" content="" />
+  <title>Dashboard - SB Admin</title>
+  <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
+  <link href="css/styles.css" rel="stylesheet" />
+  <link href="css/qlik-embed-style.css" rel="stylesheet" />
+  <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+
+  <script>
+    async function getAccessToken() {
+      const response = await fetch("/access-token", {
+        method: "POST",
+        credentials: "include",
+        mode: "same-origin",
+        redirect: "follow",
+      });
+      if (response.status === 200) {
+        return response.text();
+      }
+      const err = new Error("Unexpected serverside authentication error");
+      err.status = response.status;
+      err.detail;
+      throw err;
+    }
+  </script>
+
+
+  <script>
+    async function getConfigParameter() {
+      console.log('paramName');
+      const headers = new Headers();
+      headers.append("Accept", "application/json");
+      headers.append("Content-Type", "application/json");
+      const response = await fetch("/config", {
+        headers: headers,
+        method: "POST",
+        credentials: "include",
+        mode: "same-origin",
+        redirect: "follow"
+        //body: JSON.stringify({ "param": `${paramName}` })
+      });
+      if (response.status === 200) {
+        return response.text();
+      }
+      const err = new Error("Unexpected serverside authentication error");
+      err.status = response.status;
+      err.detail;
+      throw err;
+    }
+  </script>
+</head>
+
+<body class="sb-nav-fixed">
+  <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+    <!-- Navbar Brand-->
+    <a class="navbar-brand ps-3" href="index.html">Qlik-Embed</a>
+    <!-- Sidebar Toggle-->
+    <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i
+        class="fas fa-bars"></i></button>
+    <!-- Navbar Search-->
+    <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
+      <div class="input-group">
+        <input class="form-control" type="text" placeholder="Search for..." aria-label="Search for..."
+          aria-describedby="btnNavbarSearch" />
+        <button class="btn btn-custom" id="btnNavbarSearch" type="button"><i class="fas fa-search"></i></button>
+      </div>
+    </form>
+    <!-- Navbar-->
+    <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown"
+          aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+          <li><a class="dropdown-item" href="#!">Settings</a></li>
+          <li><a class="dropdown-item" href="#!">Activity Log</a></li>
+          <li>
+            <hr class="dropdown-divider" />
+          </li>
+          <li><a class="dropdown-item" href="#!">Logout</a></li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+  <div id="layoutSidenav">
+    <div id="layoutSidenav_nav">
+      <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+        <div class="sb-sidenav-menu">
+          <img src="/img/company-logo.svg" height="25%" width="60%" class="centerImage">
+          <div class="nav">
+            <a class="nav-link" href="#home">
+              <div class="sb-nav-link-icon"><i class="fas fa-house"></i></div>
+              Home
+            </a>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+            <br>
+
+            <div class="sb-sidenav-menu-heading">EMBEDDING STRATEGIES</div>
+            <a class="nav-link" href="#classic-app">
+              <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+              Classic App
+            </a>
+            <a class="nav-link" href="#analytics-chart">
+              <div class="sb-nav-link-icon"><i class="fas fa-chart-line"></i></div>
+              Analytics Chart
+            </a>
+            <a class="nav-link" href="#analytics-chart-data">
+              <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
+              Analytics Chart Data
+            </a>
+            <a class="nav-link" href="#field">
+              <div class="sb-nav-link-icon"><i class="fas fa-filter"></i></div>
+              Field
+            </a>
+            <a class="nav-link" href="#sheet-nav">
+              <div class="sb-nav-link-icon"><i class="fas fa-sheet-plastic"></i></div>
+              Sheet Navigation
+            </a>
+            <a class="nav-link" href="#classic-chart">
+              <div class="sb-nav-link-icon"><i class="fas fa-backward"></i></div>
+              Classic Chart
+            </a>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+            <br>
+            <div class="sb-sidenav-menu-heading">LOGOUT</div>
+            <a class="nav-link" href="charts.html">
+              <div class="sb-nav-link-icon"><i class="fas fa-right-from-bracket"></i></div>
+              Logout
+            </a>
+          </div>
+        </div>
+        <div class="sb-sidenav-footer">
+          <img src="/img/powered_by_qlik.svg" height="80%" width="80%">
+        </div>
+      </nav>
+    </div>
+    <div id="layoutSidenav_content">
+      <main>
+        <div class="container-fluid px-4">
+          <div class="content">
+            <div id="home" class="home content-item">
+              <div class="container px-4 py-5" id="featured-3">
+                <h3 class="pb-2 border-bottom" style="text-align: center;">Embedding Strategies</h3>
+                <br>
+                <br>
+                <div class="row justify-content-center">
+                  <div class="col-sm-2">
+                    <a class="nav-link" href="#classic-app">
+                      <span class="link"></span>
+                    </a>
+                    <div class="card border-primary">
+                      <div class="card-body">
+                        <h5 class="card-title">Classic App</h5>
+                        <i class="fas fa-tachometer-alt lock-icon"></i>
+                        <p class="card-text">Embed the entire Qlik App</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-sm-2">
+                    <a class="nav-link" href="#analytics-chart">
+                      <span class="link"></span>
+                    </a>
+                    <div class="card border-primary">
+                      <div class="card-body">
+                        <h5 class="card-title">Analytics Chart</h5>
+                        <i class="fas fa-chart-line lock-icon"></i>
+                        <p class="card-text">Embed a single chart/object</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-sm-2">
+                    <a class="nav-link" href="#analytics-chart-data">
+                      <span class="link"></span>
+                    </a>
+                    <div class="card border-primary">
+                      <div class="card-body">
+                        <h5 class="card-title">Analytics Chart Data</h5>
+                        <i class="fas fa-table lock-icon"></i>
+                        <p class="card-text">Extract data from hypercube</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+
+                <br>
+
+
+                <div class="row justify-content-center">
+                  <div class="col-sm-2">
+                    <a class="nav-link" href="#field">
+                      <span class="link"></span>
+                    </a>
+                    <div class="card border-primary ">
+                      <div class="card-body">
+                        <h5 class="card-title">Field</h5>
+                        <i class="fas fa-filter lock-icon"></i>
+                        <p class="card-text">Embed a list of field values</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-sm-2">
+                    <a class="nav-link" href="#classic-chart">
+                      <span class="link"></span>
+                    </a>
+                    <div class="card border-primary ">
+                      <div class="card-body">
+                        <h5 class="card-title">Classic-Chart</h5>
+                        <i class="fas fa-sheet-plastic lock-icon"></i>
+                        <p class="card-text">Embed non-Nebula.js charts</p>
+                      </div>
+                    </div>
+                  </div>
+
+
+                </div>
+
+              </div>
+
+            </div>
+            <div id="classic-app" class="container content-item">
+              <h1>
+                qlik-embed classic/app embeds the full Qlik Sense client in the
+                page.
+              </h1>
+              <div class="selections-bar">
+                <qlik-embed ui="selections" app-id="babb8cad-8e51-48e8-b87e-e1a2255935fe">
+                </qlik-embed>
+              </div>
+              <div class="classic-app">
+                <qlik-embed ui="classic/app" app-id="babb8cad-8e51-48e8-b87e-e1a2255935fe"
+                  sheet-id="uyXmT"></qlik-embed>
+              </div>
+            </div>
+            <div id="analytics-chart" class="container content-item">
+              <h1>qlik-embed analytics/chart embeds a chart in the page.</h1>
+              <!-- <h3><i>Renders only nebula.js visualizations.</i></h3> -->
+              <div class="viz">
+                <qlik-embed id="visualization" ui="analytics/chart" app-id="xxxx" object-id="QaqJ"></qlik-embed>
+              </div>
+            </div>
+            <div id="analytics-chart-data" class="container content-item">
+              <h1>Direct access to analytics application data.</h1>
+              <h3>
+                <code>let chartData = objLayout.qHyperCube.qDataPages[0].qMatrix;</code>
+              </h3>
+
+              <div id="chart-data" class="viz"></div>
+            </div>
+            <div id="field" class="container content-item">
+              <h1>qlik-embed field embeds a list box in the page.</h1>
+              <div class="viz">
+                <qlik-embed ui="field" app-id="babb8cad-8e51-48e8-b87e-e1a2255935fe" field-id="City"></qlik-embed>
+              </div>
+            </div>
+            <div id="sheet-nav" class="container content-item">
+              <div class="selections-bar">
+                <qlik-embed ui="selections" app-id="babb8cad-8e51-48e8-b87e-e1a2255935fe">
+                </qlik-embed>
+              </div>
+              <h1>
+                qlik-embed analytics/sheet can be used with custom sheet navigation.
+              </h1>
+              <!-- <h3><i>Renders only nebula.js visualizations in sheets.</i></h3> -->
+              <select id="sheetdrop" name="SheetList" class="sheet-drop"></select>
+              <div class="classic-app">
+                <qlik-embed id="sheet-change" ui="analytics/sheet" app-id="babb8cad-8e51-48e8-b87e-e1a2255935fe"
+                  object-id="uyXmT"></qlik-embed>
+              </div>
+            </div>
+            <div id="classic-chart" class="container content-item">
+              <h1>Load non-nebula charts with classic/chart.</h1>
+              <div class="classic-app">
+                <qlik-embed id="classicChartObject" ui="analytics/chart" app-id="babb8cad-8e51-48e8-b87e-e1a2255935fe"
+                  object-id="meQGcP"></qlik-embed>
+              </div>
+            </div>
+          </div>
+
+
+        </div>
+      </main>
+      <footer class="py-4 bg-light mt-auto">
+        <div class="container-fluid px-4">
+
+          <div class="d-flex align-items-center justify-content-between small">
+            <div class="text-muted">Copyright &copy; Your Website 2024</div>
+            <div>
+              <a href="#">Privacy Policy</a>
+              &middot;
+              <a href="#">Terms &amp; Conditions</a>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+    crossorigin="anonymous"></script>
+  <script src="js/scripts.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
+  <script src="assets/demo/chart-area-demo.js"></script>
+  <script src="assets/demo/chart-bar-demo.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js"
+    crossorigin="anonymous"></script>
+  <script src="js/datatables-simple-demo.js"></script>
+
+
+
+
+  <script type="module">
+    document.addEventListener("DOMContentLoaded", async function () {
+
+      async function updateTable() {
+        
+        if (countObservations === 2) {
+          observer.disconnect();
+        }
+       
+        //Get the data from the visualization in the page
+        const element = document.getElementById("visualization");
+        const refApi = await element.getRefApi();
+        const obj = await refApi.getObject();
+        const objLayout = await obj.getLayout();
+
+        let container = document.getElementById("chart-data");
+        let table = document.createElement("table");
+        let cols = [
+          objLayout.qHyperCube.qDimensionInfo[0].title,
+          objLayout.qHyperCube.qMeasureInfo[0].title,
+        ];
+        let thead = document.createElement("thead");
+        let tr = document.createElement("tr");
+        cols.forEach((item) => {
+          let th = document.createElement("th");
+          th.textContent = item;
+          tr.appendChild(th);
+        });
+        thead.appendChild(tr);
+        table.appendChild(thead);
+
+        let chartData = objLayout.qHyperCube.qDataPages[0].qMatrix;
+        chartData.forEach((item) => {
+          let tr = document.createElement("tr");
+          let vals = Object.values(item);
+          vals.forEach((elem) => {
+            let td = document.createElement("td");
+            td.textContent = elem.qText;
+            tr.appendChild(td);
+          });
+          table.appendChild(tr);
+        });
+        container.appendChild(table);
+
+        //===========
+        const element_ = document.getElementById("sheet-change");
+        const refApi_ = await element_.getRefApi();
+        const doc = await refApi_.getDoc();
+        const sheetList = await doc.getSheetList();
+
+        let dd = document.getElementById("sheetdrop");
+        dd.length = 0;
+        let defaultOption = document.createElement("option");
+        defaultOption.text = "Select a sheet to navigate to";
+        dd.add(defaultOption);
+        dd.selectedIndex = 0;
+
+        let option;
+        for (let i = 0; i < sheetList.length; i++) {
+          option = document.createElement("option");
+          option.text = sheetList[i].qMeta.title;
+          option.value = sheetList[i].qMeta.id;
+          dd.add(option);
+        }
+
+        dd.addEventListener("change", function () {
+          if (dd.selectedIndex > 0) {
+            //console.log(dd.options[dd.selectedIndex].value);
+            let selOption = dd.options[dd.selectedIndex];
+            console.log(selOption.value);
+            element_.setAttribute("object-id", selOption.value);
+          }
+        });
+      }
+
+
+      const homeDiv = document.getElementById("home");
+      const contentItems = document.querySelectorAll(".content-item");
+
+      var parameter = JSON.parse(await getConfigParameter());
+      var hostName =  parameter.tenantHostname; 
+      var clientID = parameter.oAuthClientId; 
+      var appId = parameter.appId; 
+
+
+      var script = document.createElement('script');
+      var script = "<script crossorigin='anonymous' type='application/javascript' src='https://cdn.jsdelivr.net/npm/@qlik/embed-web-components' data-host='" + hostName + "' data-client-id='" + clientID + "' data-get-access-token='getAccessToken' data-auth-type='Oauth2'><\/script>";
+      const fragment = document.createRange().createContextualFragment(script);
+      document.head.appendChild(fragment);
+
+     
+
+       const div_section = document.querySelector('#visualization');
+      var countObservations = 0;
+      var observer = new MutationObserver((mutationsList, observer) => {
+        for (const mutation of mutationsList) {
+          updateTable();
+          countObservations++;
+        }
+      });
+
+      observer.observe(div_section, {
+        attributes: true,
+        childList: false,
+        subtree: false
+      }
+      );  
+
+      var appIds = document.querySelectorAll('[app-id]');
+
+      for (i = 0; i < appIds.length; ++i) {
+          appIds[i].setAttribute('app-id', appIds);
+        }
+
+
+
+      contentItems.forEach((item) => {
+        if (item.id === "home") {
+          item.style.display = "block";
+        } else {
+          item.style.display = "none";
+        }
+      });
+    });
+
+
+    const navLinks = document.querySelectorAll(".nav-link");
+    const contentItems = document.querySelectorAll(".content-item");
+    navLinks.forEach((link) => {
+      link.addEventListener("click", (event) => {
+        event.preventDefault();
+        const targetId = link.getAttribute("href").substring(1);
+        contentItems.forEach((item) => {
+          if (item.id === targetId) {
+            item.style.display = "block";
+          } else {
+            item.style.display = "none";
+          }
+        });
+      });
+    });
+  </script>
+</body>
+
+</html>

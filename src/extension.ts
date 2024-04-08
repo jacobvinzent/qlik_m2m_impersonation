@@ -48,17 +48,10 @@ export function activate(context: ExtensionContext) {
 			let QlikSenseToken: any  = '';
 			let QlikSenseClientID: string = '';
 			let QlikSenseClientSecret: string  = '';
-			let QlikSenseAccessToken: string  = '';
-			let OAuthID: string  = '';
-			let OAuthSecret: string  = '';
-			let OAuthURL: string  = '';
+			
 			let typeOfSenseAuth: any = '';
-			let OAuth0App_clientID: string = '';
-			let OAuth0App_clientSecret: string = '';
-			let QlikAppID: string = '';
-			let QlikSheet: string = '';
-			let QlikObject: string = '';
-
+						
+			
 			
 			if(fs.existsSync(_pathDirect + '/config.json')) {
 				var jsonFile = await vscode.workspace.fs.readFile(vscode.Uri.file(_pathDirect + '/config.json'));
@@ -106,12 +99,10 @@ export function activate(context: ExtensionContext) {
 
 					}
 
-					OAuthID =json['auth0 client_id'];
-					OAuthSecret = json['auth0 client_secret'];
-					OAuthURL = json['auth0 audience URL'];
-					QlikAppID = json["Qlik Sense App Id"];
-					QlikSheet = json["Qlik Sense sheet Id"];
-					QlikObject = json["Qlik Sense object Id"];
+					
+					
+					
+					
 
 				}
 
@@ -151,31 +142,17 @@ export function activate(context: ExtensionContext) {
 				}
 			}
 
-			/*
-			while (QlikAppID === '') {
-				QlikAppID = await showInputBox("Enter Qlik Sense App Id", false);
-
-			}
-
-			while (QlikSheet === '') {
-				QlikSheet = await showInputBox("Enter Qlik Sense sheet Id", false);
-
-			}
-
-			while (QlikObject === '') {
-				QlikObject = await showInputBox("Enter Qlik Sense object Id", false);
-
-			}
-
-			*/
+			
 			let qlikTenantID: any = await getTenantID(QlikSenseToken, QlikSenseURL);
 			let Oauth_record: any = await createOAuthInQlikSense(QlikSenseToken, QlikSenseURL);
 			let Oauth_id = JSON.parse(Oauth_record).clientId;
+			let Oauth_clientSecret = JSON.parse(Oauth_record).clientSecret;
 
 			replaceObject["<replace_OAUTH_clientID_From_Qlik>"] = Oauth_id;
+			replaceObject["<replace_OAUTH_clientSecret_From_Qlik>"] = Oauth_clientSecret;
 
 			await MakeOauthTrusted(QlikSenseToken, QlikSenseURL, Oauth_id);
-			await PublishOAuthInQlikSense(QlikSenseToken, QlikSenseURL, Oauth_id);
+			//await PublishOAuthInQlikSense(QlikSenseToken, QlikSenseURL, Oauth_id);
 			
 
 			let apps: any = await uploadApps(QlikSenseToken, QlikSenseURL,path.join(__dirname, '..', 'apps'));
@@ -190,17 +167,14 @@ export function activate(context: ExtensionContext) {
 			}
 
 
-
-
-			replaceObject["<replace_APPID_From_Qlik>"] = QlikAppID;
-			replaceObject["<replace_SHEETID_From_Qlik>"] = QlikSheet;
-			replaceObject["<replace_OBJECTID_From_Qlik>"] = QlikObject;
-
+			replaceObject["<replace_APPID_From_Qlik>"] = JSON.parse(apps[0]).attributes.id;
+			replaceObject["<replace_tenantURL_From_Qlik>"] = QlikSenseURL.replace('http://','').replace('https://','');
+			
 			await readAndCreateDirs(path.join(__dirname, '..', 'assets'), _pathDirect);
 			await copyFiles_(path.join(__dirname, '..', 'assets'), _pathDirect);
 
 
-			let filesToChange: string[] = ['index.html', 'auth_config.json'];
+			let filesToChange: string[] = ['src/home.html', 'config/config.js'];
 			await changeVariables(filesToChange, _pathDirect, JSON.stringify(replaceObject));
 
 			var term = vscode.window.createTerminal('Qlik');
