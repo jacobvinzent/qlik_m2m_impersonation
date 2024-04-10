@@ -34,7 +34,6 @@ DOCTYPE html>
 
   <script>
     async function getConfigParameter() {
-      console.log('paramName');
       const headers = new Headers();
       headers.append("Accept", "application/json");
       headers.append("Content-Type", "application/json");
@@ -44,7 +43,6 @@ DOCTYPE html>
         credentials: "include",
         mode: "same-origin",
         redirect: "follow"
-        //body: JSON.stringify({ "param": `${paramName}` })
       });
       if (response.status === 200) {
         return response.text();
@@ -428,8 +426,8 @@ DOCTYPE html>
 
       var appIds = document.querySelectorAll('[app-id]');
 
-      for (i = 0; i < appIds.length; ++i) {
-          appIds[i].setAttribute('app-id', appIds);
+      for (var i = 0; i < appIds.length; i++) {
+          appIds[i].setAttribute('app-id', appId);
         }
 
 

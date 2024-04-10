@@ -1,5 +1,5 @@
 {
-  "name": "qlik_m2m_impersonation",
+  "name": "qlikM2MImpersonation",
   "displayName": "Qlik Cloud M2M Impersonation, no third party cookies needed",
   "description": "",
   "icon": "images/icon.png",
@@ -29,7 +29,6 @@
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
     "test": "vscode-test"
-
   },
   "devDependencies": {
     "@types/mocha": "^10.0.6",
@@ -44,13 +43,14 @@
     "typescript": "^5.3.2"
   },
   "dependencies": {
+    "follow-redirects": "^1.15.6",
     "node-fetch": "^2.7.0"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/jacobvinzent/qlik_m2m_impersonation"
   },
-  "licenses" : [
+  "licenses": [
     {
       "type": "MIT",
       "url": "https://www.opensource.org/licenses/mit-license.php"

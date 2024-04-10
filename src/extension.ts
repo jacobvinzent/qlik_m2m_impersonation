@@ -7,18 +7,18 @@ import { window, commands, ExtensionContext, QuickPickItemKind } from 'vscode';
 import * as vscode from 'vscode';
 
 import { showQuickPick, showInputBox } from './basicInput';
-import { createAuth0Child, getQlikSenseToken, getTenantID, createOauthIDPInQlikSense, createOAuthInQlikSense, MakeOauthTrusted, PublishOAuthInQlikSense, cleanOAuthURL, uploadApps, createSpace, createSpaceAssignment, publishApps } from './webcalls';
+import { createAuth0Child, getQlikSenseToken, getTenantID, createOauthIDPInQlikSense, createOAuthInQlikSense, MakeOauthTrusted, PublishOAuthInQlikSense, cleanOAuthURL, uploadApps, createSpace, createSpaceAssignment, publishApps} from './webcalls';
 import { url } from 'inspector';
 import * as fs from 'fs';
 import * as path from 'path';
 import { changeVariables, copyFile_, copyFiles_, readAndCreateDirs, readDir } from './fileCopy';
 import { rejects } from 'assert';
 
- 
+
 
 export function activate(context: ExtensionContext) {
-	
-	
+
+
 
 	const _path = vscode.workspace.workspaceFolders;
 
@@ -36,88 +36,83 @@ export function activate(context: ExtensionContext) {
 	context.subscriptions.push(commands.registerCommand('qlik.m2m', async () => {
 
 		if (typeof _path === 'undefined') {
-			
-				window.showInformationMessage('Please open a folder before running the extension',);
+
+			window.showInformationMessage('Please open a folder before running the extension',);
 
 
 		} else {
-			        if (_pathDirect.startsWith("/")) { _pathDirect = _pathDirect.substring(1, _pathDirect.length); };
-			
-			
-			let QlikSenseURL: string  = '';
-			let QlikSenseToken: any  = '';
+			if (_pathDirect.startsWith("/")) { _pathDirect = _pathDirect.substring(1, _pathDirect.length); };
+
+
+			let QlikSenseURL: string = '';
+			let QlikSenseToken: any = '';
 			let QlikSenseClientID: string = '';
-			let QlikSenseClientSecret: string  = '';
+			let QlikSenseClientSecret: string = '';
 			
+
 			let typeOfSenseAuth: any = '';
-						
-			
-			
-			if(fs.existsSync(_pathDirect + '/config.json')) {
+
+
+
+			if (fs.existsSync(_pathDirect + '/config.json')) {
 				var jsonFile = await vscode.workspace.fs.readFile(vscode.Uri.file(_pathDirect + '/config.json'));
-				var json:any = JSON.parse(jsonFile.toString());
-				
-				var properties =  [
+				var json: any = JSON.parse(jsonFile.toString());
+
+				var properties = [
 					"Use Oauth client_id and secret"
 				];
 
-				var res = testForEmptyJSONValue(properties,json);
-				if(res !== ""){
+				var res = testForEmptyJSONValue(properties, json);
+				if (res !== "") {
 					showError(res);
 					return;
 				} else {
-					
-				properties =  [
-					"Qlik Cloud URL"
-					
-				];
-					if(json['Use Oauth client_id and secret'] === true){
+
+					properties = [
+						"Qlik Cloud URL"
+
+					];
+					if (json['Use Oauth client_id and secret'] === true) {
 						properties.push("Qlik Sense Oauth client_id");
 						properties.push("Qlik Sense Oauth client_secret");
-						
+
 					} else {
 						properties.push("Qlik Sense developer key");
 					}
 				}
 
 
-				var res = testForEmptyJSONValue(properties,json);
-				if(res !== ""){
+				var res = testForEmptyJSONValue(properties, json);
+				if (res !== "") {
 					showError(res);
 					return;
 				} else {
 					QlikSenseURL = json['Qlik Cloud URL'];
 
-					if(json['Use Oauth client_id and secret'] === true){
-						QlikSenseClientID =  json["Qlik Sense Oauth client_id"];
-						QlikSenseClientSecret =  json["Qlik Sense Oauth client_secret"];
+					if (json['Use Oauth client_id and secret'] === true) {
+						QlikSenseClientID = json["Qlik Sense Oauth client_id"];
+						QlikSenseClientSecret = json["Qlik Sense Oauth client_secret"];
 						typeOfSenseAuth = "Use Oauth client_id and secret";
-						
+
 					} else {
-						QlikSenseToken =  json["Qlik Sense developer key"];
+						QlikSenseToken = json["Qlik Sense developer key"];
 						typeOfSenseAuth = "Developer key";
 
 					}
-
-					
-					
-					
-					
-
 				}
-
 			}
 
 			
-			while (QlikSenseURL === '') {
+			if (QlikSenseURL === "") {
 				QlikSenseURL = await showInputBox("Qlik Cloud URL in following format https://tenantName.region.qlikcloud.com", false);
-
 			}
-
+			
 			replaceObject["<replace_URL_From_Qlik>"] = QlikSenseURL;
 
-			if(typeOfSenseAuth === "") {
-				typeOfSenseAuth = await showQuickPick("Are you using a developer key or Oauth client_id and secret for Qlik Sense?", ['Developer key', 'Oauth credentials']);
+			
+
+			if (typeOfSenseAuth === "") {
+				typeOfSenseAuth = await showQuickPick("Will you use a developer key or Oauth client_id and secret for Qlik Sense?", ['Developer key', 'Oauth credentials']);
 			}
 
 			if (typeOfSenseAuth !== "Developer key") {
@@ -131,8 +126,17 @@ export function activate(context: ExtensionContext) {
 
 				}
 
+
+
+				
+
+
+
 				QlikSenseToken = await getQlikSenseToken(QlikSenseClientID, QlikSenseClientSecret, QlikSenseURL);
 				QlikSenseToken = JSON.parse(QlikSenseToken).access_token;
+
+				
+
 
 
 			} else {
@@ -142,7 +146,7 @@ export function activate(context: ExtensionContext) {
 				}
 			}
 
-			
+
 			let qlikTenantID: any = await getTenantID(QlikSenseToken, QlikSenseURL);
 			let Oauth_record: any = await createOAuthInQlikSense(QlikSenseToken, QlikSenseURL);
 			let Oauth_id = JSON.parse(Oauth_record).clientId;
@@ -153,23 +157,24 @@ export function activate(context: ExtensionContext) {
 
 			await MakeOauthTrusted(QlikSenseToken, QlikSenseURL, Oauth_id);
 			//await PublishOAuthInQlikSense(QlikSenseToken, QlikSenseURL, Oauth_id);
-			
 
-			let apps: any = await uploadApps(QlikSenseToken, QlikSenseURL,path.join(__dirname, '..', 'apps'));
 
-			let space:any = await createSpace(QlikSenseToken, QlikSenseURL, "Qlik demo space");
+			let apps: any = await uploadApps(QlikSenseToken, QlikSenseURL, path.join(__dirname, '..', 'apps'));
+
+			let space: any = await createSpace(QlikSenseToken, QlikSenseURL, "Qlik demo space");
 			await createSpaceAssignment(QlikSenseToken, QlikSenseURL, JSON.parse(space).id);
 
-			for(var n=0; n<apps.length; n++) {
+			var appId:any ="";
+			for (var n = 0; n < apps.length; n++) {
 				let app = apps[n];
 
-				await publishApps(QlikSenseToken, QlikSenseURL, JSON.parse(app).attributes.id, space, JSON.parse(app).attributes.name);
+			  appId= await publishApps(QlikSenseToken, QlikSenseURL, JSON.parse(app).attributes.id, space, JSON.parse(app).attributes.name);
 			}
 
 
-			replaceObject["<replace_APPID_From_Qlik>"] = JSON.parse(apps[0]).attributes.id;
-			replaceObject["<replace_tenantURL_From_Qlik>"] = QlikSenseURL.replace('http://','').replace('https://','');
-			
+			replaceObject["<replace_APPID_From_Qlik>"] = appId;
+			replaceObject["<replace_tenantURL_From_Qlik>"] = QlikSenseURL.replace('http://', '').replace('https://', '');
+
 			await readAndCreateDirs(path.join(__dirname, '..', 'assets'), _pathDirect);
 			await copyFiles_(path.join(__dirname, '..', 'assets'), _pathDirect);
 
@@ -179,26 +184,26 @@ export function activate(context: ExtensionContext) {
 
 			var term = vscode.window.createTerminal('Qlik');
 			term.show();
-	 		term.sendText('npm install');
+			term.sendText('npm install');
 			term.sendText('npm start run');
 
-			
 
-			function testForEmptyJSONValue(properties:Array<string>, JSON:any) {
+
+			function testForEmptyJSONValue(properties: Array<string>, JSON: any) {
 				let returnVal = "";
 				properties.some(r => {
-					if(!JSON.hasOwnProperty(r) || JSON[r].toString().trim() === "") {
-						returnVal=  r + " doesn't have a valid value in config.json";
+					if (!JSON.hasOwnProperty(r) || JSON[r].toString().trim() === "") {
+						returnVal = r + " doesn't have a valid value in config.json";
 						return true;
 					}
 				});
 
 				return returnVal;
-				
-				
+
+
 			}
 
-			function showError(error:string) {
+			function showError(error: string) {
 
 				window.showInformationMessage(error);
 				return;

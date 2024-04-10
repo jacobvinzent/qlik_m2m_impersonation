@@ -4,7 +4,7 @@ import bodyParser from "body-parser";
 import path from 'path';
 import { auth as qlikAuth, users as qlikUsers } from "@qlik/api";
 import { fileURLToPath } from 'url';
-import {myConfig, myParamsConfig} from "./config/config.js";
+import {myConfig, myParamsConfig, getParameters} from "./config/config.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 var app = express();
@@ -32,6 +32,7 @@ app.use(
 
 // Configure body parser middleware
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 
 // Get Qlik user (from Qlik-API: https://github.com/qlik-oss/qlik-api-ts/blob/9904608c39fd038c711f38cea6415d5ea6091a67/users.js)
@@ -93,6 +94,16 @@ app.post("/access-token", async (req, res) => {
       res.status(401).send("No access");
     }
   }
+});
+
+
+// Get access token (M2M impersonation) for qlik-embed
+app.post("/config", async (req, res) => {
+  const userId = req.session.userId;
+  const params = await getParameters(userId);
+  res.status(200).send(params);
+
+  
 });
 
 

@@ -142,7 +142,7 @@ export async function getQlikSenseToken(clientID: String, clientSecrect: String,
 				resolve(result);
 			}
 			)
-			.catch(error => { console.log('error', error) }
+			.catch(error => { console.log('error', error); }
 			);
 	});
 
@@ -162,8 +162,8 @@ export async function createOAuthInQlikSense(token: String, qlikSenseURL: String
 			"clientName": "my-embedded-portal",
 			"description": "",
 			//"allowedGrantTypes":["urn:qlik:oauth:user-impersonation","client_credentials"],
-			"allowedGrantTypes":["urn:qlik:oauth:user-impersonation"],
-			"allowedScopes": ["admin.users","admin.users:read","users","users:read","spaces.data","spaces.data:read","spaces.managed","spaces.managed:read","spaces.shared","spaces.shared:read","automl-deployments","automl-experiments","admin.spaces","admin.spaces:read","automations","automations:read","admin.automations","admin.automations:read","apps","apps:export","apps:read","admin.apps","admin.apps:export","admin.apps:read","identity.picture:read","identity.subject:read","identity.email:read","identity.name:read","admin_classic","user_default"],
+			"allowedGrantTypes": ["urn:qlik:oauth:user-impersonation", "client_credentials"],
+			"allowedScopes": ["admin.users", "admin.users:read", "users", "users:read", "spaces.data", "spaces.data:read", "spaces.managed", "spaces.managed:read", "spaces.shared", "spaces.shared:read", "automl-deployments", "automl-experiments", "admin.spaces", "admin.spaces:read", "automations", "automations:read", "admin.automations", "admin.automations:read", "apps", "apps:export", "apps:read", "admin.apps", "admin.apps:export", "admin.apps:read", "identity.picture:read", "identity.subject:read", "identity.email:read", "identity.name:read", "admin_classic", "user_default"],
 			"redirectUris": [
 				"https://localhost:3000",
 				"http://localhost:3000"
@@ -203,7 +203,7 @@ export async function MakeOauthTrusted(token: String, qlikSenseURL: String, Oaut
 		header.append("Authorization", `Bearer ${token}`);
 
 		var raw = JSON.stringify([
-			{"op":"replace","value":"trusted","path":"/consentMethod"}
+			{ "op": "replace", "value": "trusted", "path": "/consentMethod" }
 		]);
 
 		var requestOptions: Object = {
@@ -214,7 +214,7 @@ export async function MakeOauthTrusted(token: String, qlikSenseURL: String, Oaut
 		};
 
 		fetch(`${qlikSenseURL}/api/v1/oauth-clients/${OauthID}/connection-configs/me`, requestOptions)
-		
+
 
 			.then(response => {
 				response.text();
@@ -345,7 +345,7 @@ export async function uploadApps(token: String, qlikSenseURL: String, path_input
 			return path.extname(t).toLowerCase() === ".qvf";
 		});
 
-		for(var n=0; n<files.length; n++)
+		for (var n = 0; n < files.length; n++)
 		//for (var file in files)
 		//	files.forEach((file) =>
 		{
@@ -362,8 +362,29 @@ export async function uploadApps(token: String, qlikSenseURL: String, path_input
 }
 
 
-export async function createSpace(token: String, qlikSenseURL: String, spacename: string) {
-	return new Promise((resolve, reject) => {
+export async function createSpace(token: String, qlikSenseURL: String, spacename: string, addToName: string = "") {
+	return new Promise(async (resolve, reject) => {
+		let spaces: any = await checkSpaceName(token, qlikSenseURL, spacename);
+
+
+		while (isSpaceNameUsed(spacename + addToName)) {
+			if (addToName === "") {
+				addToName = "1";
+			} else {
+				addToName = (parseInt(addToName) + 1).toString();
+			}
+		}
+
+		function isSpaceNameUsed(name: string) {
+			if (spaces.indexOf(name) > -1) {
+				return true;
+			} else {
+				return false;
+			}
+
+		}
+
+
 		var headers = new Headers();
 		headers.append("Content-Type", "application/json");
 		headers.append("Authorization", `Bearer ${token}`);
@@ -374,7 +395,7 @@ export async function createSpace(token: String, qlikSenseURL: String, spacename
 			method: 'POST',
 			headers: headers,
 			body: JSON.stringify({
-				"name": `${spacename}`,
+				"name": `${spacename}${addToName}`,
 				"type": "managed"
 			}),
 			redirect: 'follow'
@@ -383,12 +404,13 @@ export async function createSpace(token: String, qlikSenseURL: String, spacename
 		fetch(`${qlikSenseURL}/api/v1/spaces`, requestOptions)
 			.then(response => response.text())
 			.then(result => {
+
 				resolve(result);
 			})
-			.catch(error => {
-				console.log('error', error);
-			});
-	});
+		.catch(error => {
+			console.log('error', error);
+		});
+});
 
 }
 
@@ -415,10 +437,10 @@ export async function createSpaceAssignment(token: String, qlikSenseURL: String,
 
 
 		fetch(`${qlikSenseURL}/api/v1/spaces/${spaceID}/assignments`, requestOptions)
-			.then(response => 
-				{
-					response.text();
-				})
+			.then(response => {
+				response.text();
+
+			})
 			.then(result => {
 				resolve(result);
 			})
@@ -429,14 +451,58 @@ export async function createSpaceAssignment(token: String, qlikSenseURL: String,
 }
 
 
-export async function publishApps(token: String, qlikSenseURL: String, app: String, space: String, appName:string) {
+
+async function checkSpaceName(token: String, qlikSenseURL: String, spacename: string, spaces: any = [], nextURL: string = "") {
+	return new Promise((resolve, reject) => {
+
+		var headers = new Headers();
+		headers.append("Content-Type", "application/json");
+		headers.append("Authorization", `Bearer ${token}`);
+		headers.append("accept", "application/json");
+
+
+		var requestOptions: Object = {
+			method: 'GET',
+			headers: headers,
+			redirect: 'follow'
+		};
+
+		var url = nextURL === "" ? `${qlikSenseURL}/api/v1/spaces?filter=name co "${spacename}"` : nextURL;
+
+
+		fetch(url, requestOptions)
+			.then(response => response.text())
+			.then(result => {
+
+				var spaces_temp = spaces.concat(JSON.parse(result).data);
+				if (JSON.parse(result).links.hasOwnProperty('next')) {
+
+					resolve(checkSpaceName(token, qlikSenseURL, spacename, spaces_temp, JSON.parse(result).links.next.href));
+
+				} else {
+
+					let returnArray = spaces_temp.map((v: any) => v.name);
+					resolve(returnArray);
+				}
+
+			})
+			.catch(error => {
+				console.log('error', error);
+			});
+	});
+
+}
+
+
+
+export async function publishApps(token: String, qlikSenseURL: String, app: String, space: String, appName: string) {
 	return new Promise((resolve, reject) => {
 		var headers = new Headers();
 		headers.append("Content-Type", "application/json");
 		headers.append("Authorization", `Bearer ${token}`);
 		headers.append("accept", "application/json");
 
-		var reqObj = {"spaceId":JSON.parse(`${space}`).id,"attributes":{"name":`${appName}`,"description":""},"data":"source"};
+		var reqObj = { "spaceId": JSON.parse(`${space}`).id, "attributes": { "name": `${appName}`, "description": "" }, "data": "source" };
 
 
 		var requestOptions: Object = {
@@ -448,21 +514,20 @@ export async function publishApps(token: String, qlikSenseURL: String, app: Stri
 
 
 		fetch(`${qlikSenseURL}/api/v1/apps/${app}/publish`, requestOptions)
-			.then(response => 
-				{
-					response.text();
-				})
+			.then(response => {
+				return response.text();
+
+			})
 			.then(result => {
-				resolve(result);
+				resolve(JSON.parse(result).attributes.id);
 			})
 			.catch(error => {
 				console.log('error', error);
 			});
-
-
-
 	});
 }
+
+
 
 
 export function cleanOAuthURL(url: String, find: string) {
