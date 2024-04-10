@@ -33,3 +33,6 @@ If you want to reuse your variables for multiple tests, then you can add a file 
 
 ## Run the extension
 To run the extension, select "Setup Qlik M2M impersonation" from the Command Palette. If everything runs successfully you can now see the webpage on http://localhost:3000
+
+
+

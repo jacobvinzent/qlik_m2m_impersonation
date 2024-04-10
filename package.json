@@ -4,7 +4,7 @@
   "description": "",
   "icon": "images/icon.png",
   "publisher": "vinzent",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "engines": {
     "vscode": "^1.85.0"
   },
