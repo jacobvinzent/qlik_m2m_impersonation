@@ -1,6 +1,6 @@
 # Get started with Qlik Embed, OAuth2 M2M Impersonation client
 
-This extension will configure OAuth2 M2M Impersonation on an existing Qlik tenant using the tenant URL and Client Id and Client Secret from myqlik (https://account.myqlik.qlik.com/account) or a developer key to the tenant.
+This extension will configure OAuth2 M2M Impersonation on an existing Qlik tenant using the tenant URL and Client Id and Client Secret from myqlik (https://account.myqlik.qlik.com/account) or a developer key from the tenant.
 
 ![images/integration.jpg](https://raw.githubusercontent.com/jacobvinzent/qlik_m2m_impersonation/master/images/integration.jpg)
 
@@ -9,7 +9,7 @@ This extension creates following:
 1. An Oauth-client in your Qlik cloud tenant
 2. A new space with access to everyone in the tenant
 3. Upload a test app and publish it to the new space
-4. A Node js Express web app using the values returned from 1-3 with sample HTML showing how to integrate objects in diferent ways
+4. A Node js Express web app using the values returned from 1-3 with sample HTML showing how to integrate objects in different ways
    
 ## Requirements
 
@@ -17,10 +17,8 @@ This extension creates following:
 2. Node.js installed 
 
 
-
-
 ## Config file
-If you want to reuse your variables for multiple tests, then you can add a file called config.json in the directory and enter the values here. Then you will not be prompted during the installation. All values needs to be filled. Format of config.json is: 
+If you want to reuse your variables for multiple tests, then you can add a file called config.json in the directory and enter the values here. Then you will not be prompted during the installation. All values need to be filled. Format of config.json is: 
 
 ```json
 {
@@ -34,4 +32,4 @@ If you want to reuse your variables for multiple tests, then you can add a file 
 ```
 
 ## Run the extension
-To run the extension select "Setup Qlik M2M impersonation" from the Command Palette. If everything runs succesfully you can now see the webpage on http://localhost:3000
+To run the extension, select "Setup Qlik M2M impersonation" from the Command Palette. If everything runs successfully you can now see the webpage on http://localhost:3000
