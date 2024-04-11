@@ -16,7 +16,7 @@
     "Qlik_selection_bar": {
         "prefix": "qEmbedSelectionsBar",
         "body": [
-            "<qlik-embed ui=\"selections\" app-id=\"$1\">"
+            "<qlik-embed ui=\"selections\" app-id=\"$1\"></qlik-embed>"
         ],
         "description": "Qlik Selection-bar"
     },

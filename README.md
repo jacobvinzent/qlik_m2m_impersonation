@@ -34,5 +34,20 @@ If you want to reuse your variables for multiple tests, then you can add a file 
 ## Run the extension
 To run the extension, select "Setup Qlik M2M impersonation" from the Command Palette. If everything runs successfully you can now see the webpage on http://localhost:3000
 
+## Shortcuts included for HTML files
+
+Below are the shortcuts. The ⇥ means the TAB
+
+|    Trigger                  | Content                                                  |
+| --------------------------  | ------------------------------------------------------   |
+|  `qEmbedAnalyticsChart →`   | Qlik chart, renders only nebula.js visualizations        |
+|  `qEmbedClassicChart   →`   | Qlik Classic App, renders all chart types                |
+|  `qEmbedSelectionsBar  →`   | Qlik Selection-bar                                       |
+|  `qEmbedClassicApp     →`   | Qlik Classic App, renders all chart types                |
+|  `qEmbedField          →`   | Qlik Field                                               |
+|  `qEmbedNebulaApp      →`   | Qlik Classic App, renders only nebula.js visualizations  |
+
+
+
 
 

@@ -4,7 +4,7 @@ import bodyParser from "body-parser";
 import path from 'path';
 import { auth as qlikAuth, users as qlikUsers } from "@qlik/api";
 import { fileURLToPath } from 'url';
-import {myConfig, myParamsConfig, getParameters} from "./config/config.js";
+import {myConfig, getParameters} from "./config/config.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 var app = express();

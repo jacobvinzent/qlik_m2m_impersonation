@@ -232,11 +232,11 @@ DOCTYPE html>
                 page.
               </h1>
               <div class="selections-bar">
-                <qlik-embed ui="selections" app-id="babb8cad-8e51-48e8-b87e-e1a2255935fe">
+                <qlik-embed ui="selections" app-id="">
                 </qlik-embed>
               </div>
               <div class="classic-app">
-                <qlik-embed ui="classic/app" app-id="babb8cad-8e51-48e8-b87e-e1a2255935fe"
+                <qlik-embed ui="classic/app" app-id=""
                   sheet-id="uyXmT"></qlik-embed>
               </div>
             </div>
@@ -244,7 +244,7 @@ DOCTYPE html>
               <h1>qlik-embed analytics/chart embeds a chart in the page.</h1>
               <!-- <h3><i>Renders only nebula.js visualizations.</i></h3> -->
               <div class="viz">
-                <qlik-embed id="visualization" ui="analytics/chart" app-id="xxxx" object-id="QaqJ"></qlik-embed>
+                <qlik-embed id="visualization" ui="analytics/chart" app-id="" object-id="QaqJ"></qlik-embed>
               </div>
             </div>
             <div id="analytics-chart-data" class="container content-item">
@@ -258,12 +258,12 @@ DOCTYPE html>
             <div id="field" class="container content-item">
               <h1>qlik-embed field embeds a list box in the page.</h1>
               <div class="viz">
-                <qlik-embed ui="field" app-id="babb8cad-8e51-48e8-b87e-e1a2255935fe" field-id="City"></qlik-embed>
+                <qlik-embed ui="field" app-id="" field-id="City"></qlik-embed>
               </div>
             </div>
             <div id="sheet-nav" class="container content-item">
               <div class="selections-bar">
-                <qlik-embed ui="selections" app-id="babb8cad-8e51-48e8-b87e-e1a2255935fe">
+                <qlik-embed ui="selections" app-id="">
                 </qlik-embed>
               </div>
               <h1>
@@ -272,14 +272,14 @@ DOCTYPE html>
               <!-- <h3><i>Renders only nebula.js visualizations in sheets.</i></h3> -->
               <select id="sheetdrop" name="SheetList" class="sheet-drop"></select>
               <div class="classic-app">
-                <qlik-embed id="sheet-change" ui="analytics/sheet" app-id="babb8cad-8e51-48e8-b87e-e1a2255935fe"
+                <qlik-embed id="sheet-change" ui="analytics/sheet" app-id=""
                   object-id="uyXmT"></qlik-embed>
               </div>
             </div>
             <div id="classic-chart" class="container content-item">
               <h1>Load non-nebula charts with classic/chart.</h1>
               <div class="classic-app">
-                <qlik-embed id="classicChartObject" ui="analytics/chart" app-id="babb8cad-8e51-48e8-b87e-e1a2255935fe"
+                <qlik-embed id="classicChartObject" ui="analytics/chart" app-id=""
                   object-id="meQGcP"></qlik-embed>
               </div>
             </div>
@@ -383,7 +383,6 @@ DOCTYPE html>
 
         dd.addEventListener("change", function () {
           if (dd.selectedIndex > 0) {
-            //console.log(dd.options[dd.selectedIndex].value);
             let selOption = dd.options[dd.selectedIndex];
             console.log(selOption.value);
             element_.setAttribute("object-id", selOption.value);

@@ -5,9 +5,7 @@
 const myConfig = {
   tenantHostname: "<replace_tenantURL_From_Qlik>",
   oAuthClientId: "<replace_OAUTH_clientID_From_Qlik>",
-  oAuthClientSecret: "<replace_OAUTH_clientSecret_From_Qlik>",
-  licenseOAuthClientId: "",
-  licenseOAuthClientSecret: ""
+  oAuthClientSecret: "<replace_OAUTH_clientSecret_From_Qlik>"
 
 };
 
@@ -27,4 +25,4 @@ const getParameters = async function (email) {
 
 
 
-export { myConfig, myParamsConfig, getParameters };
+export { myConfig,  getParameters };
