@@ -1,0 +1,47 @@
+{
+    "Qlik_Nebula_chart": {
+        "prefix": "qEmbedAnalyticsChart",
+        "body": [
+            "<qlik-embed  ui=\"analytics/chart\" app-id=\"$1\" object-id=\"$2\"></qlik-embed>"
+        ],
+        "description": "Qlik chart, renders only nebula.js visualizations"
+    },
+    "Qlik_std_chart": {
+        "prefix": "qEmbedClassicChart",
+        "body": [
+            "<qlik-embed  ui=\"analytics/chart\" app-id=\"$1\" object-id=\"$2\"></qlik-embed>"
+        ],
+        "description": "Qlik chart, renders all visualizations throgh the classic framework"
+    },
+    "Qlik_selection_bar": {
+        "prefix": "qEmbedSelectionsBar",
+        "body": [
+            "<qlik-embed ui=\"selections\" app-id=\"$1\">"
+        ],
+        "description": "Qlik Selection-bar"
+    },
+    "Qlik_classic_app": {
+        "prefix": "qEmbedClassicApp",
+        "body": [
+            "<qlik-embed ui=\"classic/app\" app-id=\"$1\" sheet-id=\"$2\"></qlik-embed>"
+        ],
+        "description": "Qlik Classic App, renders all chart types"
+    },
+    "Qlik_Field": {
+        "prefix": "qEmbedField",
+        "body": [
+            "<qlik-embed ui=\"field\" app-id=\"$1\" field-id=\"$2\"></qlik-embed>"
+        ],
+        "description": "Qlik Field"
+    },
+    "Qlik_Nebula_app": {
+        "prefix": "qEmbedNebulaApp",
+        "body": [
+            "<qlik-embed ui=\"analytics/sheet\" app-id=\"$1\" object-id=\"$2\"></qlik-embed>"
+        ],
+        "description": "Qlik Classic App, renders only nebula.js visualizations"
+    }
+}
+
+
+

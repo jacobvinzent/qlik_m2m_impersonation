@@ -4,17 +4,24 @@
   "description": "",
   "icon": "images/icon.png",
   "publisher": "vinzent",
-  "version": "0.0.3",
+  "version": "0.0.5",
   "engines": {
     "vscode": "^1.85.0"
   },
   "categories": [
-    "Other"
+    "Snippets"
   ],
   "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
+    "snippets": [
+      {
+        "language": "html",
+        "path": "./snippets.json"
+      }
+    ],
     "commands": [
+      
       {
         "command": "qlik.m2m",
         "title": "Setup Qlik M2M impersonation"
