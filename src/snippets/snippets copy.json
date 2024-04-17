@@ -1,0 +1,102 @@
+{
+    "app": {
+        "prefix": "index.js",
+        "body": [
+            "const express = require('express');\r\n",
+            "const cors = require('cors');\r\n",
+            "const morgan = require('morgan');\r\n",
+            "const bodyParser = require('body-parser');\r\n",
+            "\r\n",
+            "const routes = require('./routes');\r\n",
+            "\r\n",
+            "const app = express();\r\n",
+            "\r\n",
+            "app.use(cors());\r\n",
+            "app.use(morgan(':method :url :status :user-agent - :response-time ms'));\r\n",
+            "app.use(bodyParser.json());\r\n",
+            "\r\n",
+            "app.use('/', routes);\r\n",
+            "\r\n",
+            "app.listen(process.env.PORT || 3000, function() {\r\n",
+            "\tconsole.log('Express app running on port ' + (process.env.PORT || 3000))\r\n",
+            "});"
+        ],
+        "description": "index.js snippet"
+    },
+    "routes": {
+        "prefix": "index.js",
+        "body": [
+            "const express = require('express');\r\n",
+            "\r\n",
+            "const model = require('../models');\r\n",
+            "\r\n",
+            "const router = express.Router();\r\n",
+            "\r\n",
+            "router.get('/', controllers.get);\r\n",
+            "\r\n",
+            "module.exports = router;"
+        ],
+        "description": "A snippet for routes."
+    },
+    "controllers": {
+        "prefix": "index.js",
+        "body": [
+            "const { MyService } = require(\"../services\");",
+            "module.exports = {\r\n",
+            "\tget: async (req, res) => {\r\n",
+            "\t\tconst data = await MyService.doSomething();\r\n",
+            "\t},\r\n",
+            "};\r\n"
+        ],
+        "description": "A snippet for controllers."
+    },
+    "servicesIndex": {
+        "prefix": "index.js",
+        "body": [
+            "const MyService = require('./my.service');\r\n",
+            "\r\n",
+            "\tmodule.exports = {\r\n",
+            "\t\tget: async (req, res) => {\r\n",
+            "\t\t\tconsole.log('My service');\r\n",
+            "\t},\r\n",
+            "};"
+        ],
+        "description":"A snippet for index of services."
+    },
+    "myService": {
+        "prefix": "my.service.js",
+        "body": [
+            "module.exports = {\r\n",
+            "\tMyService\r\n",
+            "};"
+        ],
+        "description":"A snippet for my service."
+    },
+    "models": {
+        "prefix": "models.index.js",
+        "body": [
+            "class model {\r\n",
+            "\tconstructor() {\r\n",
+            "\t\t\r\n",
+            "\t}\r\n",
+            "\t\r\n",
+            "\tcreate() {\r\n",
+            "\t\t\r\n",
+            "\t}\r\n",
+            "\tread() {\r\n",
+            "\t\t\r\n",
+            "\t}\r\n",
+            "\tupdate() {\r\n",
+            "\t\t\r\n",
+            "\t}\r\n",
+            "\tdelete() {\r\n",
+            "\t\t\r\n",
+            "\t}\r\n",
+            "\t\r\n",
+            "}\r\n",
+            "\r\n",
+            "module.exports = model;"
+        ],
+        "description": "A snippet for models."
+    }
+}

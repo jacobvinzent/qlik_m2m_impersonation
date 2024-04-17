@@ -9,7 +9,7 @@
     "Qlik_std_chart": {
         "prefix": "qEmbedClassicChart",
         "body": [
-            "<qlik-embed  ui=\"analytics/chart\" app-id=\"$1\" object-id=\"$2\"></qlik-embed>"
+            "<qlik-embed  ui=\"classic/chart\" app-id=\"$1\" object-id=\"$2\"></qlik-embed>"
         ],
         "description": "Qlik chart, renders all visualizations throgh the classic framework"
     },

@@ -11,7 +11,7 @@ var app = express();
 app.use(express.static('src'));
 const PORT = process.env.PORT || 3000;
 
-const config = {
+var  config = {
   authType: "oauth2",
   host: "https://" + myConfig.tenantHostname,
   clientId: myConfig.oAuthClientId,
