@@ -106,7 +106,7 @@ app.get("/appsheets", async (req, res) => {
           userId,
           scope: "user_default",
         },
-        withoutData: true,
+        withoutData: false,
       });
       // get the "qix document (qlik app)"
       const app = await appSession.getDoc();
@@ -180,6 +180,7 @@ app.get("/logout", async (req, res) => {
 
 // Get hypercube data (hardcoded values for the provided example app)
 app.get("/hypercube", async (req, res) => {
+  
   const userId = req.session.userId;
   if (typeof userId !== "undefined" && userId !== null) {
     try {
@@ -190,7 +191,7 @@ app.get("/hypercube", async (req, res) => {
           userId,
           scope: "user_default",
         },
-        withoutData: false,
+        withoutData: false
       });
       // get the "qix document (qlik app)"
       const app = await appSession.getDoc();
@@ -253,7 +254,6 @@ app.get("/hypercube", async (req, res) => {
       hypercubeDict["ProducTypes"] = productTypes;
       hypercubeDict["SalesAmount"] = salesAmount;
       appSession.close();
-
       res.send(hypercubeDict);
     } catch (err) {
       console.log(err);
