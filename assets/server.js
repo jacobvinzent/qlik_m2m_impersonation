@@ -252,6 +252,7 @@ app.get("/hypercube", async (req, res) => {
       var hypercubeDict = {};
       hypercubeDict["ProducTypes"] = productTypes;
       hypercubeDict["SalesAmount"] = salesAmount;
+      appSession.close();
 
       res.send(hypercubeDict);
     } catch (err) {
