@@ -158,12 +158,12 @@ export async function createOAuthInQlikSense(token: String, qlikSenseURL: String
 		headers.append("Authorization", `Bearer ${token}`);
 		var accessScopes = admin ? ["admin_classic", "user_default"]:["user_default"];
 
-		
+		var postfixTitle = admin ? "_admin" : "_client"
 			
 
 		var raw = JSON.stringify({
 			"appType": "web",
-			"clientName": "my-embedded-portal",
+			"clientName": "my-embedded-portal" + postfixTitle,
 			"description": "",
 			"allowedGrantTypes": ["urn:qlik:oauth:user-impersonation", "client_credentials"],
 			"allowedScopes": accessScopes,
