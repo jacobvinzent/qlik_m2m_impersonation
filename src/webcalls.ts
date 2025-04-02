@@ -149,21 +149,24 @@ export async function getQlikSenseToken(clientID: String, clientSecrect: String,
 };
 
 
-export async function createOAuthInQlikSense(token: String, qlikSenseURL: String) {
+export async function createOAuthInQlikSense(token: String, qlikSenseURL: String, admin:boolean) {
 	qlikSenseURL = cleanOAuthURL(qlikSenseURL, '');
 
 	return new Promise((resolve, reject) => {
 		var headers = new Headers();
 		headers.append("Content-Type", "application/json");
 		headers.append("Authorization", `Bearer ${token}`);
+		var accessScopes = admin ? ["admin_classic", "user_default"]:["user_default"];
+
+		
+			
 
 		var raw = JSON.stringify({
 			"appType": "web",
 			"clientName": "my-embedded-portal",
 			"description": "",
-			//"allowedGrantTypes":["urn:qlik:oauth:user-impersonation","client_credentials"],
 			"allowedGrantTypes": ["urn:qlik:oauth:user-impersonation", "client_credentials"],
-			"allowedScopes": ["admin.users", "admin.users:read", "users", "users:read", "spaces.data", "spaces.data:read", "spaces.managed", "spaces.managed:read", "spaces.shared", "spaces.shared:read", "automl-deployments", "automl-experiments", "admin.spaces", "admin.spaces:read", "automations", "automations:read", "admin.automations", "admin.automations:read", "apps", "apps:export", "apps:read", "admin.apps", "admin.apps:export", "admin.apps:read", "identity.picture:read", "identity.subject:read", "identity.email:read", "identity.name:read", "admin_classic", "user_default"],
+			"allowedScopes": accessScopes,
 			"redirectUris": [
 				"https://localhost:3000",
 				"http://localhost:3000"
@@ -547,6 +550,33 @@ export function cleanOAuthURL(url: String, find: string) {
 
 
 }
+
+
+
+export async function getAssistants(token: String, qlikSenseURL: String) {
+	qlikSenseURL = cleanOAuthURL(qlikSenseURL, '');
+
+	return new Promise((resolve, reject) => {
+		var headers = new Headers();
+		headers.append("Content-Type", "application/json");
+		headers.append("Authorization", `Bearer ${token}`);
+
+		var requestOptions: Object = {
+			method: 'GET',
+			headers: headers,
+			redirect: 'follow'
+		};
+
+		fetch(`${qlikSenseURL}/api/v1/assistants`, requestOptions)
+			.then(response => response.text())
+			.then(result => {
+				resolve(result);
+	
+			})
+			.catch(error => console.log('error', error));
+
+	});
+};
 
 
 

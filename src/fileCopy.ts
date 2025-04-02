@@ -1,5 +1,6 @@
 import { rejects } from 'assert';
-import { copyFile, readdirSync, existsSync, mkdirSync, copyFileSync, lstatSync, cpSync, readFile, readFileSync, writeFileSync } from 'fs';
+import { copyFile, readdirSync, existsSync, mkdirSync, copyFileSync, lstatSync, cpSync, readFile, readFileSync, writeFileSync} from 'fs';
+import * as fs from 'fs';
 import path, { resolve } from 'path';
 import * as vscode from 'vscode';
 import { FileSystemProvider } from 'vscode';
@@ -29,7 +30,7 @@ export async function copyFile_(source: string, target: string) {
     return new Promise((resolve, reject) => {
         let directory = target.substring(0, target.lastIndexOf("\\"));
         if (!existsSync(directory)) {
-          
+
             mkdirSync(directory, { recursive: true });
         }
 
@@ -103,3 +104,56 @@ export async function changeVariables(files: string[], mainDir: string, changes:
     });
 
 };
+
+
+export async function generateRandomstring(length:number) {
+    return new Promise((resolve, reject) => {
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let result = '';
+        for (let i = 0; i < length; i++) {
+            const randomIndex = Math.floor(Math.random() * characters.length);
+            result += characters[randomIndex];
+        }
+        
+
+        resolve(result);
+    });
+
+};
+
+
+
+// Function to read the file, modify its content, and write the result to a new file
+export async function hideAssistant(File: string, mainDir: string) {
+    // Read the HTML file
+    let file = path.join(mainDir, File);
+
+    fs.readFile(file, 'utf8', (err, data) => {
+        if (err) {
+            console.error("Error reading file:", err);
+            return;
+        }
+
+        // Regex to find the <a> with the href="#ai-assistant" and its child <div class="sb-nav-link-icon">
+        const regex = /(<a class="nav-link" href="#ai-assistant">.*?<div class="sb-nav-link-icon">.*?<\/div>)/g;
+
+        // Replace the <div class="sb-nav-link-icon"> with a hidden div
+        const updatedData = data.replace(regex, (match) => {
+            // Modify the <div> to include the style "display:none;"
+            return match.replace(
+                /<div class="sb-nav-link-icon">.*?<\/div>/,
+                '<div class="sb-nav-link-icon" style="display:none;"></div>'
+            );
+        });
+
+        // Write the modified HTML to the output file
+        fs.writeFile(file, updatedData, 'utf8', (err) => {
+            if (err) {
+                console.error("Error writing file:", err);
+            } else {
+                console.log("File updated successfully!");
+            }
+        });
+        resolve("OK");
+    });
+}

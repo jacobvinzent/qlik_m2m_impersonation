@@ -7,11 +7,11 @@ import { window, commands, ExtensionContext, QuickPickItemKind } from 'vscode';
 import * as vscode from 'vscode';
 
 import { showQuickPick, showInputBox } from './basicInput';
-import { createAuth0Child, getQlikSenseToken, getTenantID, createOauthIDPInQlikSense, createOAuthInQlikSense, MakeOauthTrusted, PublishOAuthInQlikSense, cleanOAuthURL, uploadApps, createSpace, createSpaceAssignment, publishApps} from './webcalls';
+import { createAuth0Child, getQlikSenseToken, getTenantID, createOauthIDPInQlikSense, createOAuthInQlikSense, MakeOauthTrusted, PublishOAuthInQlikSense, cleanOAuthURL, uploadApps, createSpace, createSpaceAssignment, publishApps, getAssistants} from './webcalls';
 import { url } from 'inspector';
 import * as fs from 'fs';
 import * as path from 'path';
-import { changeVariables, copyFile_, copyFiles_, readAndCreateDirs, readDir } from './fileCopy';
+import { changeVariables, copyFile_, copyFiles_, readAndCreateDirs, readDir,generateRandomstring, hideAssistant } from './fileCopy';
 import { rejects } from 'assert';
 
 
@@ -51,6 +51,10 @@ export function activate(context: ExtensionContext) {
 			
 
 			let typeOfSenseAuth: any = '';
+			let includeAssistant: any = '';
+			let randomString:any = await generateRandomstring(36);
+			
+			replaceObject["<Replace_SOME_LONG_RANDOM_TEXT_VALUE>"] = randomString;
 
 
 
@@ -127,18 +131,10 @@ export function activate(context: ExtensionContext) {
 				}
 
 
-
-				
-
-
-
 				QlikSenseToken = await getQlikSenseToken(QlikSenseClientID, QlikSenseClientSecret, QlikSenseURL);
 				QlikSenseToken = JSON.parse(QlikSenseToken).access_token;
 
 				
-
-
-
 			} else {
 
 				while (QlikSenseToken === '') {
@@ -147,15 +143,29 @@ export function activate(context: ExtensionContext) {
 			}
 
 
+			if (includeAssistant === "") {
+				includeAssistant = await showQuickPick("Do you have a Qlik Answers Assistant you want to inlude?", ['Yes', 'No']);
+			}
+
+
 			let qlikTenantID: any = await getTenantID(QlikSenseToken, QlikSenseURL);
-			let Oauth_record: any = await createOAuthInQlikSense(QlikSenseToken, QlikSenseURL);
+			let Oauth_record: any = await createOAuthInQlikSense(QlikSenseToken, QlikSenseURL,false);
 			let Oauth_id = JSON.parse(Oauth_record).clientId;
 			let Oauth_clientSecret = JSON.parse(Oauth_record).clientSecret;
 
 			replaceObject["<replace_OAUTH_clientID_From_Qlik>"] = Oauth_id;
 			replaceObject["<replace_OAUTH_clientSecret_From_Qlik>"] = Oauth_clientSecret;
 
+			let Oauth_admin_record: any = await createOAuthInQlikSense(QlikSenseToken, QlikSenseURL,true);
+			let Oauth_admin_id = JSON.parse(Oauth_admin_record).clientId;
+			let Oauth_admin_clientSecret = JSON.parse(Oauth_admin_record).clientSecret;
+
+			replaceObject["<replace_OAUTH_Backend_clientID_From_Qlik>"] = Oauth_admin_id;
+			replaceObject["<replace_OAUTH_Backend_clientSecret_From_Qlik>"] = Oauth_admin_clientSecret;
+
+
 			await MakeOauthTrusted(QlikSenseToken, QlikSenseURL, Oauth_id);
+			await MakeOauthTrusted(QlikSenseToken, QlikSenseURL, Oauth_admin_id);
 			//await PublishOAuthInQlikSense(QlikSenseToken, QlikSenseURL, Oauth_id);
 
 
@@ -175,11 +185,49 @@ export function activate(context: ExtensionContext) {
 			replaceObject["<replace_APPID_From_Qlik>"] = appId;
 			replaceObject["<replace_tenantURL_From_Qlik>"] = QlikSenseURL.replace('http://', '').replace('https://', '');
 
+
+			//Include Assistant
+			if(includeAssistant ==='Yes') {
+				let Assistants:any = await getAssistants(QlikSenseToken, QlikSenseURL);
+				let AssistantsLimited = [];
+				let AssistantsNames:any = [];
+	
+				JSON.parse(Assistants).data.forEach(function(element:any) {
+					
+					AssistantsNames.push(element.name); 
+					
+				});
+	
+	
+	
+				let assistant: any = '';
+				let assistantID: any = '';
+				assistant = await showQuickPick("Which assistant will you integrate?", AssistantsNames);
+	
+				JSON.parse(Assistants).data.forEach(function(element:any) {
+					
+					if(element.name === assistant) {
+						assistantID = element.id;
+						replaceObject["<replace_ANSWERS_ASSISTANT_ID>"] =assistantID;
+					}
+	
+					replaceObject["<replace_ANSWERS_ASSISTANT_ID_Class>"] ="";
+	
+				});
+
+			} else 
+			{
+					replaceObject["<replace_ANSWERS_ASSISTANT_ID_Class>"] ="hideAssistant";
+					//hideAssistant('src/home.html', _pathDirect);
+			}
+
+
+			
 			await readAndCreateDirs(path.join(__dirname, '..', 'assets'), _pathDirect);
 			await copyFiles_(path.join(__dirname, '..', 'assets'), _pathDirect);
 
 
-			let filesToChange: string[] = ['src/home.html', 'config/config.js'];
+			let filesToChange: string[] = ['src/home.html', 'config/config.js','.env.dev'];
 			await changeVariables(filesToChange, _pathDirect, JSON.stringify(replaceObject));
 
 			var term = vscode.window.createTerminal('Qlik');

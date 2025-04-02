@@ -1,39 +1,88 @@
 /*
- * Config file: change the parameters according to your integration scenario.
- * Do not version control this file, and consider using .env files if you require
- * a more common integration pattern.
+ * Config file: This file no longer requires manual updates to values,
+ * as they are now managed through environment variables.
  */
+import { config } from "dotenv";
+import path from "path";
 
-// This is the hard-coded config for the M2M steps in impersonation, exposed below by getParameters().
-const myConfig = {
-  tenantHostname: "<replace_tenantURL_From_Qlik>",
-  oAuthClientId: "<replace_OAUTH_clientID_From_Qlik>",
-  oAuthClientSecret: "<replace_OAUTH_clientSecret_From_Qlik>",
-  appId: "<replace_APPID_From_Qlik>"
-};
+// Load environment variables from .env file
+const nodeEnv = process.env.NODE_ENV || "";
+config({
+  path: path.resolve(process.cwd(), `.env${nodeEnv ? "." + nodeEnv : ""}`),
+});
 
-// Create a cut-down config without the client secret for use in the qlik-embed HEAD tag
-const myParamsConfig = {
-  tenantHostname: myConfig.tenantHostname,
-  oAuthClientId: myConfig.oAuthClientId,
-  appId: myConfig.appId,
-};
-
-const getParameters = async function (email) {
+const getBackendConfig = async function (email) {
   /*
     This function should:
     - Accept a user or customer identifier (such as email)
     - Look up the correct Qlik Cloud tenant for that customer
-    - Retrieve the corresponding OAuth client details for the impersonation activity
-    - Retrieve the corresponding OAuth client for the qlik-embed tag (review guiding
+    - Retrieve the corresponding OAuth client details for the backend activity (review guiding
       principles for OAuth M2M impersonation: https://qlik.dev/authenticate/oauth/guiding-principles-oauth-impersonation/)
   
     For purposes of making this demo as simple as possible, the values are hardcoded
-    in this project via myParamsConfig, and the same OAuth client is used for
-    embedding and impersonation. Do not do this in production.
+    in this project via a .env file. Do not do this in production.
 
     */
-  return myParamsConfig;
+
+  // Build app settings
+  const appSettings = {
+    secret: process.env.SESSION_SECRET,
+    port: process.env.PORT,
+    userPrefix: process.env.USER_PREFIX,
+    hypercubeDimension: process.env.HYPERCUBE_DIMENSION,
+    hypercubeMeasure: process.env.HYPERCUBE_MEASURE,
+  };
+
+  // Build qlik/api backend config
+  const configBackend = {
+    authType: "oauth2",
+    host: process.env.TENANT_URI,
+    clientId: process.env.OAUTH_BACKEND_CLIENT_ID,
+    clientSecret: process.env.OAUTH_BACKEND_CLIENT_SECRET,
+    noCache: true,
+  };
+
+  // Build qlik/api frontend config
+  const configFrontend = {
+    authType: "oauth2",
+    host: process.env.TENANT_URI,
+    clientId: process.env.OAUTH_FRONTEND_CLIENT_ID,
+    clientSecret: process.env.OAUTH_FRONTEND_CLIENT_SECRET,
+    noCache: true,
+  };
+
+  return { configBackend, configFrontend, appSettings };
 };
 
-export { myConfig, getParameters };
+const getFrontendConfig = async function (email) {
+  /*
+    This function should:
+    - Accept a user or customer identifier (such as email)
+    - Look up the correct Qlik Cloud tenant for that customer
+    - Retrieve the corresponding impersonation OAuth client for the qlik-embed tag (review guiding
+      principles for OAuth M2M impersonation: https://qlik.dev/authenticate/oauth/guiding-principles-oauth-impersonation/)
+  
+    For purposes of making this demo as simple as possible, the values are hardcoded
+    in this project via a .env file. Do not do this in production.
+
+    */
+
+  // This is a cut-down config without the client secret for use in the qlik-embed HEAD tag.
+  const myParamsConfig = {
+    tenantUri: process.env.TENANT_URI,
+    oAuthFrontEndClientId: process.env.OAUTH_FRONTEND_CLIENT_ID,
+    appId: process.env.APP_ID,
+    sheetId: process.env.SHEET_ID,
+    objectId: process.env.OBJECT_ID,
+    fieldId: process.env.FIELD_ID,
+    assistantId: process.env.ASSISTANT_ID,
+    hypercubeDimension: process.env.HYPERCUBE_DIMENSION,
+    hypercubeMeasure: process.env.HYPERCUBE_MEASURE,
+    masterDimension: process.env.MASTER_DIMENSION,
+    masterMeasure: process.env.MASTER_MEASURE
+  };
+
+  return { myParamsConfig };
+};
+
+export { getFrontendConfig, getBackendConfig };
