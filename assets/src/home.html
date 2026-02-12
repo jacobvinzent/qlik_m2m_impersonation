@@ -237,9 +237,9 @@
               </div>
 
               <div id="ai-assistant" class="container content-item" style="display: none;">
-                <h1>AI Assistant (ai/assistant)</h1>
+                <h1>Agentic AI Assistant (ai/assistant)</h1>
                 <div class="ai">
-                  <qlik-embed id="visualization" ui="ai/assistant" assistant-id=""></qlik-embed>
+                  <qlik-embed id="visualization" ui="ai/agentic-assistant" assistant-id=""></qlik-embed>
                 </div>
               </div>
 
@@ -510,7 +510,7 @@
                 qeObjects[i].setAttribute('object-id', configParams.objectId);
               }
               break;
-            case 'ai/assistant':
+            case 'ai/agentic-assistant':
               qeObjects[i].setAttribute('assistant-id', configParams.assistantId);
               break;
           }
